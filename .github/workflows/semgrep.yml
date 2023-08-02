@@ -37,4 +37,4 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: requirementstxt
-      - run: semgrep ci --supply-chain --verbose
+      - run: semgrep ci --verbose
