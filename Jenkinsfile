@@ -25,7 +25,7 @@ pipeline {
                         sh "echo 'PR scan'"
                         semgrepPullRequestScan()
                     }  else {
-                        sh "echo 'PR scan'"
+                        sh "echo 'full scan'"
                         semgrepFullScan()
                     }
                 }
