@@ -13,7 +13,7 @@ users = [
         "user_id": 1,
         "email": "admin@metacorp.com",
         "is_admin": True,
-        "password": "admin1234",
+        "password": "admin1234!",
         "first_name": "Admin",
         "last_name": "",
         "created_at": pytz.utc.localize(datetime.datetime.now()),
