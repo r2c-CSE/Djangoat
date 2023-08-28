@@ -12,8 +12,11 @@ pipeline {
     // }
     stage('semgrep-scan') {
       steps {
-        sh 'pip3 install semgrep'
-        sh 'semgrep ci'
+        sh '''docker pull returntocorp/semgrep && \
+            docker run \
+            -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
+            -v "$(pwd):$(pwd)" --workdir $(pwd) \
+            returntocorp/semgrep semgrep ci '''      
       }
     }
   }
