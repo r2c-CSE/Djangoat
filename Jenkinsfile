@@ -3,6 +3,8 @@ pipeline {
   environment {
     // Required for a Semgrep Cloud Platform-connected scan:
     SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
+    // Set repo name to expected format
+    SEMGREP_REPO_NAME = env.GIT_URL.replaceFirst(/^https:\/\/github.com\/(.*)$/, '$1')
   }
   stages {
     stage('Print-Vars') {
