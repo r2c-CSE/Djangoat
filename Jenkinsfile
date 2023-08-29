@@ -12,6 +12,7 @@ pipeline {
     // }
     stage('semgrep-scan') {
       steps {
+        sh 'git checkout master'
         sh '''docker pull returntocorp/semgrep && \
             docker run \
             -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
