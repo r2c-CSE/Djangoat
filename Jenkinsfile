@@ -5,11 +5,11 @@ pipeline {
     SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
   }
   stages {
-    // stage('Print-Vars') {
-    //   steps {
-    //     sh 'printenv | sort'
-    //   }
-    // }
+    stage('Print-Vars') {
+      steps {
+        sh 'printenv | sort'
+      }
+    }
     stage('semgrep-scan') {
       steps {
         sh 'git checkout master'
