@@ -16,18 +16,21 @@ pipeline {
       when {
         branch "PR-*"
       }
-      // Ideally want to transform this to the merge-base output of CHANGE_BRANCH and CHANGE_TARGET
       steps {
+        sh '''git fetch --no-tags --force --progress -- $GIT_URL +refs/heads/$CHANGE_TARGET:refs/remotes/origin/$CHANGE_TARGET
+              git checkout -b $CHANGE_TARGET origin/$CHANGE_TARGET
+              git checkout $GIT_BRANCH
+           '''
         sh '''docker pull returntocorp/semgrep && \
             docker run \
             -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
             -e SEMGREP_REPO_NAME=$SEMGREP_REPO_NAME \
-            -e SEMGREP_BASELINE_REF="master" \
+            -e SEMGREP_BASELINE_REF=$(git merge-base $GIT_BRANCH $CHANGE_TARGET) \
             -v "$(pwd):$(pwd)" --workdir $(pwd) \
             returntocorp/semgrep semgrep ci '''      
       }
     }
-    stage('semgrep--scan') {
+    stage('semgrep-scan') {
       when {
         branch "master"
       }
@@ -39,6 +42,12 @@ pipeline {
             -v "$(pwd):$(pwd)" --workdir $(pwd) \
             returntocorp/semgrep semgrep ci '''      
       }
+    }
+  }
+  post {
+    // Clean after build
+    always {
+      cleanWs()
     }
   }
 }
