@@ -1,5 +1,10 @@
+@Library('semgrep') _
+
 pipeline {
   agent any
+  options {
+    skipDefaultCheckout(true)
+  }
   environment {
     // Required for a Semgrep Cloud Platform-connected scan:
     SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
@@ -12,15 +17,22 @@ pipeline {
         sh 'printenv | sort'
       }
     }
+    stage("Checkout") {
+      steps {
+        script {
+          if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main') {
+            checkoutRepo("armchairlinguist/Djangoat", master, 1, master, "https://github.com/")
+          } else {
+            checkoutRepo("armchairlinguist/Djangoat", env.CHANGE_BRANCH, 100, master, "https://github.com/")
+          }
+        }
+      }
+    }
     stage('semgrep-diff-scan') {
       when {
         branch "PR-*"
       }
       steps {
-        sh '''git fetch --no-tags --force --progress -- $GIT_URL +refs/heads/$CHANGE_TARGET:refs/remotes/origin/$CHANGE_TARGET
-              git checkout -b $CHANGE_TARGET origin/$CHANGE_TARGET
-              git checkout $GIT_BRANCH
-           '''
         sh '''docker pull returntocorp/semgrep && \
             docker run \
             -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
